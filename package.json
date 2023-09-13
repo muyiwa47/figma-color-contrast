@@ -1,0 +1,19 @@
+{
+  "name": "demo-color-picker",
+  "version": "1.0.0",
+  "description": "Your Figma Plugin",
+  "main": "code.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "watch": "npm run build -- --watch"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.76.0",
+    "typescript": "^5.2.2"
+  },
+  "publishConfig": {
+    "registry": "https://repo.etrade.com/registry/npm/npm-et/"
+  }
+}

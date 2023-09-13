@@ -1,0 +1,526 @@
+<!-- Code for ui.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Contrast Checker</title>
+</head>
+<body>
+
+<style>
+#maincontainer {
+    height: 300px;
+}
+#maincontent h2 {
+	padding-top: 15px;
+    font-size: 12px;
+}
+#normal, #big, #ui {
+	border: 1px solid #CCC;
+	float: right;
+	padding: 1em;
+	text-align: center;
+	width: 100%;
+}
+#uibox {
+	border:2px solid grey;
+	padding:2px;
+}
+#ui {
+	margin-bottom:20px;
+}
+
+#normal a, #big a {
+	text-decoration: none;
+}
+#normal a:hover,
+#normal a:focus,
+#big a:hover,
+#big a:focus {
+	text-decoration: underline;
+}
+#big {
+	font-size: 14pt;
+	font-weight: bold;
+}
+
+#ratioContainer {
+	display: inline-block;
+	margin-left: 0.5em;
+	padding-top: 11px;
+	text-align: center;
+}
+#ratio,
+#textBackRatio,
+#linkTextRatio,
+#linkBackRatio {
+	display: block;
+	font-size: 2em;
+}
+#textBackRatio,
+#linkTextRatio,
+#linkBackRatio {
+	display: inline-block;
+	min-width: 4em;
+}
+#ratioContainer > span {
+	border: 1px solid #CCC;
+	border-radius: 6px;
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 10px;
+	min-width: 7em;
+}
+#textBackRatioContainer > span,
+#linkTextRatioContainer > span,
+#linkBackRatioContainer > span {
+	border: 1px solid #CCC;
+	border-radius: 6px;
+	display: block;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+#ratioContainer.pass > span,
+#textBackRatioContainer.pass > span,
+#linkTextRatioContainer.pass > span,
+#linkBackRatioContainer.pass > span {
+	border: 3px solid #080;
+	padding: 8px;
+}
+#permalink {
+	display: block;
+}
+#contrastForm {
+	float: left;
+}
+#contrastForm fieldset {
+	border: 1px solid #CCC;
+	border-radius: 8px;
+	display: inline-block;
+	margin: 0 10px 10px 0;
+	padding: 10px;
+	width: 90%;
+}
+#contrastForm fieldset div {
+	margin-top: 0.5em;
+}
+#contrastForm fieldset div div{
+	height:10px;
+	margin-top:0;
+	border-radius:3px;
+}
+#contrastForm input {
+	margin-right: 0.5em;
+	vertical-align: bottom;
+}
+#contrastForm label {
+	vertical-align: top;
+}
+#contrastForm input[type=text] {
+	border: 1px solid #777;
+	font: 100% 'PT Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	height: 22px;
+	padding: 0 4px;
+	text-transform: uppercase;
+	width: 4.5em;
+}
+#contrastForm input[type=color] {
+	border: 0;
+	cursor: pointer;
+	height: 24px;
+	padding: 0;
+	width: 4.5em;
+}
+#contrastForm input[type=range] {
+	width: 100%;
+}
+#swap {
+	background: transparent;
+	border: 0;
+	font-size: 2em;
+	margin: 1.3em .3em 0 0;
+	vertical-align: top;
+}
+#fLightness, #bLightness {
+	height: 20px;
+	cursor: pointer;
+}
+#fError, #bError, #lError {
+	display: none;
+}
+.results {
+	float: left;
+}
+.results p {
+	padding-bottom: 2px;
+}
+.results span {
+	float: right;
+	font-weight: bold;
+	margin: 0 0.5em;
+	padding: 0 0.5em;
+	text-align: center;
+	transition: all .2s;
+	width: 2.2em;
+}	
+span.pass {
+	background-color: #080;
+	border-radius: 1em;
+	color: #FFF;
+}
+span.fail {
+	color: #C00;
+}
+h2 {
+	clear: both;
+}
+legend {
+	font-weight: bold;
+}
+hr {
+	color: transparent;
+}
+</style>
+
+    <main id="maincontainer">
+
+        <article id="maincontent">
+        <h1>MS Contrast Checker</h1>
+        
+        <div class="section">
+            <form id="contrastForm">
+                <fieldset>
+                    <legend>Foreground Color</legend>
+                    <p class="error" id="fError" style="display: none;">Please enter a valid <a href="http://en.wikipedia.org/wiki/Web_colors#Hex_triplet">hex triplet</a>, or use the color picker.</p>
+                    <label for="fHex" class="hidden">Hex</label>
+                    <input id="fHex" type="text" maxlength="7" required="">
+                    <label for="fPick" class="hidden">color picker</label>
+                    <input id="fPick" type="color">
+                    <div>
+                        <label for="fLightness">Lightness</label>
+                        <input id="fLightness" type="range" min="0" max="100" step="1">
+                        <div class="gradient"></div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Background Color</legend>
+                    <p class="error" id="bError" style="display: none;">Please enter a valid <a href="http://en.wikipedia.org/wiki/Web_colors#Hex_triplet">hex triplet</a>, or use the color picker.</p>
+                    <label for="bHex" class="hidden">Hex</label>
+                    <input id="bHex" type="text" maxlength="7" required="">
+                    <label for="bPick" class="hidden">color picker</label>
+                    <input id="bPick" type="color">
+                    <div>
+                        <label for="bLightness">Lightness</label>
+                        <input id="bLightness" type="range" min="0" max="100" step="1">
+                        <div class="gradient"></div>
+                    </div>
+                </fieldset>
+            </form>
+            <div id="ratioContainer" class="">
+                <span>
+                    Contrast Ratio
+                    <span id="ratio"></span>
+                </span>
+             
+            </div>
+           
+            <div class="results">
+                <h2>Normal Text</h2> 
+                <p>WCAG AA: <span id="normalAA" class=""></span></p>
+            </div>
+            <span id="normal">The five boxing wizards jump quickly.</span>
+          
+            <div class="results">  
+                <h2>Large Text</h2>
+                <p>WCAG AA: <span id="bigAA" class=""></span></p>
+            </div>
+            <!-- <span id="big">The five boxing wizards jump quickly.</span>  -->
+        </div>
+        
+        </article>
+        </main>
+
+    <script>
+
+         var textInputs = document.querySelectorAll('#fHex, #bHex');
+         var colorInputs = document.querySelectorAll('#fHex, #bHex, #fPick, #bPick');
+         var colorSliders = document.querySelectorAll('#fLightness, #bLightness');
+
+        // window.onmessage = (event) => {
+        //     if (event.data.pluginMessage.type === 'contrast-result') {
+        //         resultElement.innerText = 'Contrast Ratio: ' + event.data.pluginMessage.contrastRatioObject.ratio.toFixed(2) + ": 1";
+        //     }
+        // };
+
+        // Global variables
+        var f = "#000000", b = "#000000"; // default colors;
+            // Focus event for text inputs
+            textInputs.forEach(function(input) {
+                input.addEventListener('focus', function() {
+                    this.select();
+                });
+            });
+
+            function mousemoveHandler(event) {
+                // Your code to handle mousemove events here
+            console.log("Event Removed")
+}
+
+            // Mouse events for color sliders
+            colorSliders.forEach(function(slider) {
+                slider.addEventListener('mousedown', function() {
+                    var context = this.id.charAt(0);
+                    this.addEventListener('mousemove', function() {
+                        changeHue(context);
+                    });
+                });
+
+                slider.addEventListener('mouseup', function() {
+                    this.removeEventListener('mousemove', mousemoveHandler);
+                });
+
+                slider.addEventListener('mouseout', function() {
+                    this.removeEventListener('mousemove', mousemoveHandler);
+                });
+            });
+
+            // Change event for color sliders
+            colorSliders.forEach(function(slider) {
+                slider.addEventListener('change', function() {
+                    var context = this.id.charAt(0);
+                    changeHue(context);
+                });
+            });
+
+            // Change event for color inputs
+            colorInputs.forEach(function(input) {
+                input.addEventListener('change', function() {
+                    var color = this.value;
+                    var context = this.id.charAt(0);
+                    var errorElement = document.getElementById(context + 'Error');
+
+                    errorElement.style.display = 'none';
+
+                    if (color.charAt(0) !== '#') {
+                        color = '#' + color;
+                    }
+
+                    if (color.length === 4) {
+                        color = '#' + color.charAt(1).repeat(2) + color.charAt(2).repeat(2) + color.charAt(3).repeat(2);
+                    }
+
+                    this.value = color;
+
+                    // Validation
+                    if (color.length !== 7 || isNaN(getRGB(color.substr(1)))) {
+                        errorElement.style.display = 'block';
+                        this.focus();
+                    } else {
+                        this.removeAttribute('aria-invalid');
+                        this.removeAttribute('aria-describedby');
+                        errorElement.style.display = 'none';
+                        eval(context + '= color.toUpperCase()');
+                        update();
+                    }
+                });
+            });
+
+            function update() {
+                var fHex = document.querySelector('#fHex');
+                var fPick = document.querySelector('#fPick');
+                var bHex = document.querySelector('#bHex');
+                var bPick = document.querySelector('#bPick');
+                var normalElements = document.querySelectorAll('#normal');
+
+                fHex.value = f;
+                fPick.value = f;
+                bHex.value = b;
+                bPick.value = b;
+
+                normalElements.forEach(function (element) {
+                    element.style.color = f;
+                    element.style.backgroundColor = b;
+                });
+
+                var fHSL = RGBtoHSL(getRGB(f.substr(1, 2)), getRGB(f.substr(3, 2)), getRGB(f.substr(-2)));
+                var bHSL = RGBtoHSL(getRGB(b.substr(1, 2)), getRGB(b.substr(3, 2)), getRGB(b.substr(-2)));
+
+                var fLightness = document.querySelector('#fLightness');
+                var bLightness = document.querySelector('#bLightness');
+
+                fLightness.value = Math.round(fHSL[2]);
+                bLightness.value = Math.round(bHSL[2]);
+
+                var fGradient = fLightness.nextElementSibling;
+                var bGradient = bLightness.nextElementSibling;
+
+                fGradient.style.background = 'linear-gradient(to right,hsl(' + fHSL[0] + ',' + fHSL[1] + '%,0%), hsl(' + fHSL[0] + ',' + fHSL[1] + '%,50%), hsl(' + fHSL[0] + ',' + fHSL[1] + '%,100%))';
+                bGradient.style.background = 'linear-gradient(to right,hsl(' + bHSL[0] + ',' + bHSL[1] + '%,0%), hsl(' + bHSL[0] + ',' + bHSL[1] + '%,50%), hsl(' + bHSL[0] + ',' + bHSL[1] + '%,100%))';
+
+                checkContrast();
+            }
+
+            function changeHue(context) {
+                var HSL = RGBtoHSL(getRGB(eval(context).substr(1, 2)), getRGB(eval(context).substr(3, 2)), getRGB(eval(context).substr(-2)));
+                var RGB = HSLtoRGB(HSL[0], HSL[1], document.querySelector('#' + context + 'Lightness').value);
+
+                for (var i = 0; i < 3; i++) {
+                    RGB[i] = (RGB[i] >= 16) ? RGB[i].toString(16) : '0' + RGB[i].toString(16);
+                }
+
+                eval(context + '= "#" + (RGB[0] + RGB[1] + RGB[2]).toUpperCase()');
+                update();
+            }
+
+            function checkContrast() {
+                var L1 = getL(f), L2 = getL(b), ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+                var ratioElement = document.querySelector('#ratio');
+                var normalAA = document.querySelector('#normalAA');
+                var bigAA = document.querySelector('#bigAA');
+                var ratioContainer = document.querySelector('#ratioContainer');
+
+
+                ratioElement.innerHTML = '<b>' + Dec2((ratio * 100) / 100) + '</b>:1';
+
+                if (ratio >= 4.5) {
+                    normalAA.classList.add('pass');
+                    normalAA.classList.remove('fail');
+                    ratioContainer.classList.add('pass');
+                    normalAA.innerHTML = "PASS"
+                } else {
+                    normalAA.classList.remove('pass');
+                    normalAA.classList.add('fail');
+                    ratioContainer.classList.remove('pass');
+                    normalAA.innerHTML = "FAIL"
+                }
+
+                if (ratio >= 3) {
+                    bigAA.classList.add('pass');
+                    bigAA.classList.remove('fail');
+                    bigAA.innerHTML = "PASS";
+                } else {
+                    bigAA.classList.remove('pass');
+                    bigAA.classList.add('fail');
+                    bigAA.innerHTML = "FAIL"
+                }
+
+            }
+
+            function getRGB(c) {
+                try {
+                    var c = parseInt(c, 16);
+                } catch (err) {
+                    var c = false;
+                }
+                return c;
+            }
+
+            function HSLtoRGB(H, S, L) {
+                var p1, p2;
+                L /= 100;
+                S /= 100;
+                if (L <= 0.5) p2 = L * (1 + S);
+                else p2 = L + S - (L * S);
+                p1 = 2 * L - p2;
+                if (S == 0) {
+                    R = G = B = L;
+                } else {
+                    R = findRGB(p1, p2, H + 120);
+                    G = findRGB(p1, p2, H);
+                    B = findRGB(p1, p2, H - 120);
+                }
+                return [Math.round(R *= 255), Math.round(G *= 255), Math.round(B *= 255)];
+            }
+
+            function RGBtoHSL(r, g, b) {
+                var Min, Max;
+                r = (r / 51) * 0.2;
+                g = (g / 51) * 0.2;
+                b = (b / 51) * 0.2;
+                if (r >= g) {
+                    Max = r;
+                } else {
+                    Max = g;
+                }
+                if (b > Max) {
+                    Max = b;
+                }
+                if (r <= g) {
+                    Min = r;
+                } else {
+                    Min = g;
+                }
+                if (b < Min) {
+                    Min = b;
+                }
+                L = (Max + Min) / 2;
+                if (Max == Min) {
+                    S = H = 0;
+                } else {
+                    if (L < 0.5) {
+                        S = (Max - Min) / (Max + Min);
+                    } else {
+                        S = (Max - Min) / (2 - Max - Min);
+                    }
+                    if (r == Max) {
+                        H = (g - b) / (Max - Min);
+                    }
+                    if (g == Max) {
+                        H = 2 + ((b - r) / (Max - Min));
+                    }
+                    if (b == Max) {
+                        H = 4 + ((r - g) / (Max - Min));
+                    }
+                }
+                H = Math.round(H * 60);
+                if (H < 0) {
+                    H += 360;
+                }
+                if (H >= 360) {
+                    H -= 360;
+                }
+                return [H, Math.round(S * 100), Math.round(L * 100)];
+            }
+
+            function findRGB(q1, q2, hue) {
+                if (hue > 360) hue -= 360;
+                if (hue < 0) hue += 360;
+                if (hue < 60) return (q1 + (q2 - q1) * hue / 60);
+                else if (hue < 180) return (q2);
+                else if (hue < 240) return (q1 + (q2 - q1) * (240 - hue) / 60);
+                else return (q1);
+            }
+
+            function getsRGB(c) {
+                c = getRGB(c) / 255;
+                c = (c <= 0.03928) ? c / 12.92 : Math.pow(((c + 0.055) / 1.055), 2.4);
+                return c;
+            }
+
+            function getL(c) {
+                return (0.2126 * getsRGB(c.substr(1, 2)) + 0.7152 * getsRGB(c.substr(3, 2)) + 0.0722 * getsRGB(c.substr(-2)));
+            }
+
+            function Dec2(num) {
+                num = String(num);
+                if (num.indexOf('.') !== -1) {
+                    var numarr = num.split(".");
+                    if (numarr.length == 1) {
+                        return Number(num);
+                    } else {
+                        return Number(numarr[0] + "." + numarr[1].charAt(0) + numarr[1].charAt(1));
+                    }
+                } else {
+                    return Number(num);
+                }
+            }
+
+            // Intercept form submit
+            var contrastForm = document.getElementById('contrastForm');
+            contrastForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+    </script>
+</body>
+</html>

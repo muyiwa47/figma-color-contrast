@@ -1,0 +1,2 @@
+registry =  "https://repo.etrade.com/registry/npm/npm-all/"
+nvm use stable

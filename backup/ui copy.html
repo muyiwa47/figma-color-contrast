@@ -1,0 +1,61 @@
+<!-- Code for ui.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Contrast Checker</title>
+</head>
+<body>
+    <style>
+        p#result {
+          padding: 10px;
+          font-size: 16px;
+        }
+    </style>
+    <h2>WCAG Contrast Checker</h2>
+    <input id="color1Lightness" type="range" min="0" max="100" step="1">
+    <input id="fHex" type="text" maxlength="7" required="">
+         <input id="color1" type="color" placeholder="Choose first color">
+         <div id="showColorValue1"></div>
+    <input id="color2Lightness" type="range" min="0" max="100" step="1">
+    <input id="bHex" type="text" maxlength="7" required="">
+         <input id="color2" type="color" placeholder="Choose second color">
+         <div id="showColorValue2"></div>
+    <button onclick="checkContrast()">Check Contrast</button>
+
+    <p><strong>Contrast Ratio:</strong></p>
+    <p id="result"></p>
+
+    <script>
+        let resultElement = document.getElementById('result');
+        let colorElem1 = document.getElementById('showColorValue1');
+        let colorElem2 = document.getElementById('showColorValue2');
+
+        window.onload = () => {
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            colorElem1.innerText = color1;
+            colorElem2.innerText = color2;
+        }
+
+        function checkContrast() {
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            resultElement.style.color = color1;
+            resultElement.style.backgroundColor = color2;
+            colorElem1.innerText = color1;
+            colorElem2.innerText = color2;
+            window.parent.postMessage({ pluginMessage: { type: 'check-contrast', color1, color2 } }, '*');
+        }
+
+        // Listen for messages from the plugin logic
+        window.onmessage = (event) => {
+            if (event.data.pluginMessage.type === 'contrast-result') {
+                resultElement.innerText = 'Contrast Ratio: ' + event.data.pluginMessage.ratio.toFixed(2);
+            }
+        };
+    </script>
+</body>
+</html>
